@@ -36,7 +36,9 @@ USUARIOS_EXCEPTUADOS=admin@mail.com,soporte@mail.com,otro@ejemplo.com
 ```
 
 ---
+
 ## Función principal: process_csv_and_delete_users
+
 Entradas:
 - csv_filepath: ruta del archivo CSV
 
@@ -54,9 +56,11 @@ Entradas:
 
 - col_ultimo_acceso: nombre de la columna donde figura la última conexión
 
-col_es_usuario: nombre de la columna que dice si es tipo "User"
+- col_es_usuario: nombre de la columna que dice si es tipo "User"
 
-account_id_column: nombre de la columna con el ID del usuario
+- account_id_column: nombre de la columna con el ID del usuario
+
+---
 
 ## 🧾 Formato esperado del archivo CSV
 
