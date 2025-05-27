@@ -18,11 +18,16 @@ def process_csv_and_delete_users(csv_filepath, api_url, username, api_token,
         with open(csv_filepath, 'r', newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
 
-            # Verificar columnas necesarias
-            for col in [account_id_column, "email", "Added to org", col_ultimo_acceso, col_es_usuario]:
+            # Verificar columnas necesarias (col_es_usuario es opcional)
+            columnas_requeridas = [account_id_column, "email", "Added to org", col_ultimo_acceso]
+            for col in columnas_requeridas:
                 if col not in reader.fieldnames:
                     print(f"Error: Falta la columna requerida '{col}' en el CSV.")
                     return
+
+            col_es_usuario_presente = col_es_usuario in reader.fieldnames
+            if not col_es_usuario_presente:
+                print(f"Advertencia: No se encontró la columna '{col_es_usuario}' en el CSV. Se omitirá la validación de tipo de usuario.")
 
             for row in reader:
                 email = row.get("email", "").strip().lower()
@@ -31,10 +36,11 @@ def process_csv_and_delete_users(csv_filepath, api_url, username, api_token,
                 if email in excepciones:
                     continue
 
-                # Verificar si es tipo "User"
-                tipo_usuario = row.get(col_es_usuario, "").strip().lower()
-                if tipo_usuario != "user":
-                    continue
+                # Verificar si es tipo "User" solo si la columna existe
+                if col_es_usuario_presente:
+                    tipo_usuario = row.get(col_es_usuario, "").strip().lower()
+                    if tipo_usuario != "user":
+                        continue
 
                 # Validar fecha de alta
                 added_to_org_str = row.get("Added to org", "").strip()
