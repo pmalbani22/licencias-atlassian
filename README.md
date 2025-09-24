@@ -24,22 +24,39 @@ pip install requests python-dotenv
 Crear un archivo `.env` en el mismo directorio que el script, con el siguiente contenido:
 
 ```env
-ATLASSIAN_SITE=tu-sitio.atlassian.net 
+ATLASSIAN_SITE=tu-sitio.atlassian.net
 ATLASSIAN_EMAIL=mail-usuario-admin
 ATLASSIAN_API_TOKEN=token-usuario-admin
 COLUMNA_ES_USUARIO=columna donde figura el tipo de usuario
-FECHA_LIMITE=2024-12-31 
-DIAS_INACTIVOS=45 
+FECHA_LIMITE=2024-12-31
+DIAS_INACTIVOS=45
 GROUP_ID= id del grupo del que hay que eliminar el usuario
-COLUMNA_ULTIMO_ACCESO= columna donde figura la fecha de último acceso al producto 
-USUARIOS_EXCEPTUADOS=admin@mail.com,soporte@mail.com,otro@ejemplo.com 
+COLUMNA_ULTIMO_ACCESO= columna donde figura la fecha de último acceso al producto
 ```
+
+---
+
+## 📋 Archivo de Excepciones CSV
+
+El script lee las excepciones de usuarios desde un archivo CSV llamado `excepciones.csv`. Este archivo debe contener una columna con los correos electrónicos de los usuarios que deben ser excluidos del procesamiento.
+
+**Formato del archivo `excepciones.csv`:**
+
+```csv
+email
+admin@mail.com
+soporte@mail.com
+otro@ejemplo.com
+```
+
+> **Nota:** El archivo debe tener una cabecera `email` y listar un correo electrónico por fila.
 
 ---
 
 ## Función principal: process_csv_and_delete_users
 
 Entradas:
+
 - csv_filepath: ruta del archivo CSV
 
 - api_url: URL base de la API de Jira
@@ -52,7 +69,7 @@ Entradas:
 
 - dias_inactivos: umbral de inactividad en días
 
-- excepciones: lista de correos a excluir
+- excepciones_csv: ruta al archivo CSV con los correos a excluir
 
 - col_ultimo_acceso: nombre de la columna donde figura la última conexión
 
@@ -78,7 +95,7 @@ El archivo debe tener las siguientes columnas:
 
 ## 🚦 Criterios aplicados por el script
 
-1. **Exclusión por email:** si el email del usuario está en la lista `USUARIOS_EXCEPTUADOS`, será ignorado.
+1. **Exclusión por email:** si el email del usuario está en el archivo `excepciones.csv`, será ignorado.
 2. **Tipo de usuario:** solo se procesan usuarios cuyo tipo es `User`.
 3. **Fecha de creación:** se procesan únicamente usuarios creados en o antes de la fecha `FECHA_LIMITE`.
 4. **Inactividad:**
@@ -96,6 +113,7 @@ python nombre_del_script.py
 ```
 
 Este comando:
+
 - Procesa el CSV definido en el script (variable `csv_file`).
 - Aplica las validaciones.
 - Elimina por API los usuarios que cumplan con los criterios.
